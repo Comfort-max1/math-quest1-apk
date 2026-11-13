@@ -1,0 +1,17 @@
+{
+  "name": "数学小勇士：李子大闯关",
+  "short_name": "李子大闯关",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "theme_color": "#2f6fed",
+  "background_color": "#f2f6fc",
+  "start_url": "index.html",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

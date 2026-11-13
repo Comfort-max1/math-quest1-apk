@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>数学小勇士：李子大闯关</title>
+<meta name="theme-color" content="#2f6fed">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="李子大闯关">
+<meta name="description" content="五年级数学知识点闯关答题游戏，100 题分 10 关，70 分过关。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%237c5cff'/%3E%3Ccircle cx='32' cy='38' r='16' fill='%238e5bd0'/%3E%3Ccircle cx='27' cy='33' r='4' fill='%23b796e6'/%3E%3Cpath d='M32 22c0-5 4-8 8-8' stroke='%235b3a8f' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Cpath d='M34 18c5-2 9 0 10 4-5 2-9 0-10-4z' fill='%231fa97a'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+  :root{--blue:#2f6fed;--blue-dark:#1f56c4;--green:#1fa97a;--red:#e5534b;--amber:#f5a623;--purple:#7c5cff;--bg:#f2f6fc;--card:#fff;--ink:#1c2b3a;--sub:#5b6b7b;--line:#dbe6f2;--radius:18px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;background:linear-gradient(160deg,#eef3ff 0%,#f6f2ff 55%,#f2f6fc 100%);color:var(--ink);min-height:100vh;display:flex;justify-content:center}
+  .wrap{width:100%;max-width:720px;padding:20px 16px 48px}
+  .view{display:none}.view.active{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .hero{background:linear-gradient(135deg,#7c5cff,#2f6fed);border-radius:24px;padding:36px 24px;color:#fff;text-align:center;box-shadow:0 14px 30px rgba(124,92,255,.28);position:relative;overflow:hidden}
+  .hero::before,.hero::after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.12)}
+  .hero::before{width:160px;height:160px;top:-60px;right:-40px}.hero::after{width:110px;height:110px;bottom:-40px;left:-30px}
+  .mascot{width:84px;height:84px;margin:0 auto 10px;animation:bob 2.4s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .hero h1{font-size:28px;margin-bottom:10px}.hero p{font-size:15px;opacity:.94;line-height:1.7;max-width:480px;margin:0 auto}
+  .rule-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:18px 0}
+  .rule-row span{background:rgba(255,255,255,.16);border-radius:12px;padding:9px 13px;font-size:13px}
+  .start-btn{margin-top:8px;display:inline-flex;align-items:center;gap:8px;background:var(--amber);color:#fff;border:none;font-size:18px;font-weight:bold;padding:15px 36px;border-radius:999px;cursor:pointer;box-shadow:0 8px 18px rgba(245,166,35,.4)}
+  .map-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+  .map-head h2{font-size:20px}
+  .sound-btn{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 12px;cursor:pointer;color:var(--sub);font-size:14px}
+  .stage{margin-bottom:18px}
+  .stage-title{font-size:14px;font-weight:bold;color:var(--sub);margin:0 4px 10px}
+  .nodes{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
+  .node{aspect-ratio:1;max-width:44px;margin:0 auto;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:bold;font-size:12px;background:#e7eef7;color:#9db2c6;border:2px dashed #c9d9ea}
+  .node .ico{width:14px;height:14px}
+  .node.current{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .node.done{background:var(--amber);color:#fff;border-color:var(--amber)}
+  .node.miss{background:var(--red);color:#fff;border-color:var(--red)}
+  .node.locked{opacity:.55}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px;flex-wrap:wrap}
+  .hud{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .pill{background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 15px;font-weight:bold;font-size:14px;display:inline-flex;gap:6px;align-items:center;box-shadow:0 3px 10px rgba(28,43,58,.07)}
+  .star{color:var(--amber)}.combo{color:var(--purple)}
+  .progress-track{height:12px;background:#e2ecf7;border-radius:999px;overflow:hidden;margin-bottom:18px;box-shadow:inset 0 1px 3px rgba(28,43,58,.12)}
+  .progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--purple),var(--blue));border-radius:999px;transition:width .3s}
+  .card{background:var(--card);border-radius:22px;padding:24px 22px;box-shadow:0 12px 30px rgba(47,111,237,.12);border:1px solid rgba(219,230,242,.7)}
+  .q-tag{display:inline-block;background:linear-gradient(135deg,#2f6fed,#5b9bff);color:#fff;font-size:12px;font-weight:bold;padding:5px 12px;border-radius:999px;letter-spacing:.5px}
+  .q-level{display:inline-block;font-size:11px;padding:3px 10px;border-radius:999px;color:#fff;margin-left:6px;font-weight:bold}
+  .q-level.basic{background:var(--green)}.q-level.hard{background:var(--amber)}
+  .q-stem{font-size:20px;font-weight:bold;line-height:1.6;margin:14px 0 20px;color:var(--ink)}
+  .options{display:grid;gap:13px}
+  .opt{display:flex;align-items:center;gap:13px;border:2px solid var(--line);border-radius:16px;padding:15px 15px;cursor:pointer;background:#fff;transition:border-color .15s,background .15s,transform .12s,box-shadow .15s;min-height:50px;position:relative}
+  .opt:hover:not(.locked){border-color:var(--blue);background:#f6faff;transform:translateX(4px);box-shadow:0 6px 16px rgba(47,111,237,.14)}
+  .opt .key{flex:0 0 32px;height:32px;border-radius:11px;background:#eef3fa;color:var(--sub);display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:15px;transition:inherit}
+  .opt .txt{font-size:16px;line-height:1.5;min-width:0;padding-right:26px}
+  .opt.correct{border-color:var(--green);background:#eaf8f2;animation:pop .3s}
+  .opt.correct .key{background:var(--green);color:#fff}
+  .opt.correct::after{content:"✓";position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:20px;font-weight:bold;color:var(--green)}
+  .opt.wrong{border-color:var(--red);background:#fdeeee;animation:shake .3s}
+  .opt.wrong .key{background:var(--red);color:#fff}
+  .opt.wrong::after{content:"✕";position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:18px;font-weight:bold;color:var(--red)}
+  .opt.locked{cursor:default}.opt.dim{opacity:.5}
+  @keyframes pop{0%{transform:scale(.96)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .explain{margin-top:16px;border-left:4px solid var(--amber);background:#fff8ec;border-radius:0 16px 16px 0;padding:15px 17px;font-size:15px;line-height:1.7;display:none;box-shadow:0 4px 12px rgba(245,166,35,.12)}
+  .explain.show{display:block;animation:fade .2s ease}.explain b{color:var(--amber)}
+  .diagram{margin-top:12px;background:#fff;border:1px dashed var(--line);border-radius:12px;padding:12px}
+  .diagram svg{width:100%;height:auto;display:block}.diagram .cap{font-size:12px;color:var(--sub);margin-top:6px;text-align:center}
+  .anim{transform-origin:center;animation:grow .6s ease both}@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  .next-row{margin-top:18px;display:flex;justify-content:flex-end}
+  .next-btn{background:linear-gradient(135deg,var(--blue),#5b9bff);color:#fff;border:none;font-size:16px;font-weight:bold;padding:13px 28px;border-radius:14px;cursor:pointer;box-shadow:0 8px 18px rgba(47,111,237,.3);transition:transform .12s,box-shadow .15s}
+  .next-btn:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(47,111,237,.4)}
+  .particle{position:fixed;width:10px;height:10px;pointer-events:none;z-index:50;border-radius:50%}
+  .result{background:var(--card);border-radius:var(--radius);padding:30px 22px;text-align:center;box-shadow:0 6px 18px rgba(28,43,58,.08)}
+  .trophy{width:110px;height:110px;margin:0 auto 14px}
+  .result h2{font-size:24px;margin-bottom:8px}.grade{font-size:18px;font-weight:bold;color:var(--blue-dark);margin-bottom:6px}.meta{color:var(--sub);font-size:15px;margin-bottom:8px}
+  .stat-row{display:flex;gap:10px;justify-content:center;margin:16px 0;flex-wrap:wrap}
+  .stat{background:#f2f6fc;border-radius:14px;padding:12px 18px;min-width:96px}
+  .stat .num{font-size:22px;font-weight:bold;color:var(--blue-dark)}.stat .lab{font-size:12px;color:var(--sub)}
+  .review{text-align:left;margin:18px 0;display:grid;gap:10px}
+  .review-item{border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.6}
+  .review-item .ok{color:var(--green);font-weight:bold}.review-item .no{color:var(--red);font-weight:bold}.review-item .ans{color:var(--sub)}
+  .again-btn{background:var(--amber);color:#fff;border:none;font-size:16px;font-weight:bold;padding:13px 30px;border-radius:12px;cursor:pointer}
+  @media (min-width:600px){.q-stem{font-size:21px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section class="view active" id="view-start">
+    <div class="hero">
+      <svg class="mascot" viewBox="0 0 96 96">
+        <circle cx="48" cy="48" r="38" fill="#fff"/>
+        <circle cx="36" cy="44" r="5" fill="#1c2b3a"/><circle cx="60" cy="44" r="5" fill="#1c2b3a"/>
+        <path d="M36 58 Q48 68 60 58" stroke="#1c2b3a" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M48 10l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" fill="#f5a623"/>
+      </svg>
+      <h1>数学小勇士：李子大闯关</h1>
+      <p>100 道题随机分 10 关，每关 10 题（7 基础 + 3 提升）。每关需达到 70 分才能解锁下一关，未达标则挑战失败。每题配图形讲解，答对集星、连对加分。</p>
+      <div class="rule-row"><span>100 道题库</span><span>10 关随机</span><span>70 分过关</span><span>提升 30%</span></div>
+      <p style="font-size:13px;opacity:.85;margin-top:6px">手机浏览器菜单选择「添加到主屏幕」，即可像 APP 一样全屏打开。</p>
+      <button class="start-btn" id="btn-start">出发闯关<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </div>
+  </section>
+
+  <section class="view" id="view-map">
+    <div class="map-head"><h2>闯关地图</h2><button class="sound-btn" id="btn-sound">音效：开</button></div>
+    <div id="map"></div>
+  </section>
+
+  <section class="view" id="view-quiz">
+    <div class="topbar">
+      <div class="hud">
+        <div class="pill"><span class="star">★</span><span id="stars">0</span></div>
+        <div class="pill">本关 <span id="score">0</span></div>
+        <div class="pill combo" id="combo-pill" style="display:none">连击 ×<span id="combo">0</span></div>
+      </div>
+      <div class="pill" id="progress-label">1 / 100</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="card">
+      <span class="q-tag" id="q-tag">知识点</span><span class="q-level basic" id="q-level">基础</span>
+      <div class="q-stem" id="q-stem">题干</div>
+      <div class="options" id="options"></div>
+      <div class="explain" id="explain"></div>
+      <div class="next-row"><button class="next-btn" id="btn-next" style="display:none">下一题</button></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-fail">
+    <div class="result">
+      <svg class="trophy" viewBox="0 0 110 110">
+        <circle cx="55" cy="55" r="50" fill="#fdeeee"/>
+        <path d="M38 38l34 34M72 38L38 72" stroke="#e5534b" stroke-width="7" stroke-linecap="round"/>
+      </svg>
+      <h2>挑战失败</h2>
+      <div class="grade" style="color:var(--red)" id="fail-title">本关未达标</div>
+      <div class="meta" id="fail-meta"></div>
+      <div class="stat-row">
+        <div class="stat"><div class="num" id="fail-score">0</div><div class="lab">本关得分</div></div>
+        <div class="stat"><div class="num" id="fail-correct">0</div><div class="lab">答对题数</div></div>
+        <div class="stat"><div class="num">70</div><div class="lab">过关门槛</div></div>
+      </div>
+      <div class="review-item" style="margin-bottom:18px;color:var(--sub)">本关需要达到 70 分才能解锁下一关，复习错题解析后再试一次吧。</div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="again-btn" id="btn-retry">重试本关</button>
+        <button class="again-btn" id="btn-home" style="background:#7c8aa0">返回主页</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-result">
+    <div class="result">
+      <svg class="trophy" viewBox="0 0 110 110">
+        <circle cx="55" cy="55" r="50" fill="#fff4df"/>
+        <path d="M35 30h40v18a20 20 0 0 1-40 0z" fill="#f5a623"/>
+        <path d="M35 34H22a13 13 0 0 0 13 14M75 34h13a13 13 0 0 1-13 14" stroke="#f5a623" stroke-width="5" fill="none"/>
+        <rect x="50" y="66" width="10" height="10" fill="#f5a623"/><rect x="40" y="76" width="30" height="8" rx="3" fill="#f5a623"/>
+      </svg>
+      <h2>闯关完成</h2>
+      <div class="grade" id="grade"></div><div class="meta" id="meta"></div>
+      <div class="stat-row">
+        <div class="stat"><div class="num" id="stat-score">0</div><div class="lab">总分</div></div>
+        <div class="stat"><div class="num" id="stat-star">0</div><div class="lab">星星</div></div>
+        <div class="stat"><div class="num" id="stat-combo">0</div><div class="lab">最高连击</div></div>
+      </div>
+      <div class="review" id="review"></div>
+      <button class="again-btn" id="btn-again">再玩一次</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+const STAGE_COUNT=10, PER_STAGE=10, BASIC_PER=7, HARD_PER=3;
+const QUESTIONS = [
+{tag:"小数乘法",level:"basic",stem:"0.3 × 2 = ？",options:["0.6","0.5","6","0.06"],answer:0,explain:"3×2=6，一位小数得 0.6。",diagram:{type:"strip",a:"0.3",b:"×2",c:"0.6"}},
+{tag:"小数乘法",level:"basic",stem:"0.5 × 4 = ？",options:["2","0.2","20","0.02"],answer:0,explain:"5×4=20，一位小数得 2.0，即 2。",diagram:null},
+{tag:"小数乘法",level:"basic",stem:"1.2 × 3 = ？",options:["3.6","3.2","4.2","0.36"],answer:0,explain:"12×3=36，一位小数得 3.6。",diagram:null},
+{tag:"小数乘法",level:"basic",stem:"0.25 × 4 = ？",options:["1","0.1","10","0.01"],answer:0,explain:"25×4=100，两位小数得 1.00，即 1。",diagram:null},
+{tag:"小数乘法",level:"basic",stem:"0.36 × 2.5 = ？",options:["0.9","0.09","9","0.009"],answer:0,explain:"36×25=900，共三位小数，得 0.900=0.9。",diagram:{type:"strip",a:"0.36",b:"×2.5",c:"0.9"}},
+{tag:"小数乘法",level:"basic",stem:"1.25 × 0.8 = ？",options:["1","0.1","10","0.01"],answer:0,explain:"125×8=1000，三位小数得 1.000=1。",diagram:null},
+{tag:"小数乘法",level:"basic",stem:"2.4 × 5 = ？",options:["12","10","1.2","120"],answer:0,explain:"24×5=120，一位小数得 12.0=12。",diagram:null},
+{tag:"小数乘法",level:"basic",stem:"0.7 × 0.3 = ？",options:["0.21","2.1","0.1","21"],answer:0,explain:"7×3=21，两位小数得 0.21。",diagram:null},
+{tag:"小数乘法",level:"basic",stem:"4.5 × 0.2 = ？",options:["0.9","9","0.09","90"],answer:0,explain:"45×2=90，两位小数得 0.90=0.9。",diagram:null},
+{tag:"小数乘法",level:"basic",stem:"0.8 × 0.5 = ？",options:["0.4","4","0.04","40"],answer:0,explain:"8×5=40，两位小数得 0.40=0.4。",diagram:null},
+{tag:"小数乘法",level:"basic",stem:"3.2 × 0.3 = ？",options:["0.96","9.6","0.9","96"],answer:0,explain:"32×3=96，两位小数得 0.96。",diagram:null},
+{tag:"小数乘法",level:"hard",stem:"1.25 × 3.2 = ？",options:["4","3.2","40","0.4"],answer:0,explain:"1.25×3.2=1.25×8×0.4=10×0.4=4。",diagram:null},
+{tag:"小数乘法",level:"hard",stem:"0.99 × 5 = ？",options:["4.95","4.5","9.95","0.495"],answer:0,explain:"(1−0.01)×5=5−0.05=4.95。",diagram:null},
+{tag:"小数乘法",level:"hard",stem:"3.6 × 2.5 = ？",options:["9","8","90","0.9"],answer:0,explain:"36×25=900，两位小数得 9.00=9。",diagram:null},
+{tag:"小数除法",level:"basic",stem:"7.2 ÷ 0.8 = ？",options:["9","0.9","0.09","90"],answer:0,explain:"除数扩大 10 倍变 8，被除数变 72，72÷8=9。",diagram:{type:"strip",a:"7.2",b:"÷0.8",c:"9"}},
+{tag:"小数除法",level:"basic",stem:"4.5 ÷ 0.5 = ？",options:["9","0.9","90","0.09"],answer:0,explain:"同乘 10：45÷5=9。",diagram:null},
+{tag:"小数除法",level:"basic",stem:"8.4 ÷ 4 = ？",options:["2.1","2.4","21","0.21"],answer:0,explain:"84÷4=21，一位小数得 2.1。",diagram:null},
+{tag:"小数除法",level:"basic",stem:"0.6 ÷ 0.2 = ？",options:["3","0.3","30","0.03"],answer:0,explain:"同乘 10：6÷2=3。",diagram:null},
+{tag:"小数除法",level:"basic",stem:"10 ÷ 0.5 = ？",options:["20","5","2","50"],answer:0,explain:"同乘 10：100÷5=20。",diagram:null},
+{tag:"小数除法",level:"hard",stem:"7.2 ÷ 0.08 = ？",options:["90","9","0.9","900"],answer:0,explain:"同乘 100：720÷8=90。",diagram:null},
+{tag:"小数除法",level:"basic",stem:"4.5 ÷ 0.15 = ？",options:["30","3","0.3","300"],answer:0,explain:"同乘 100：450÷15=30。",diagram:null},
+{tag:"小数除法",level:"basic",stem:"12.6 ÷ 0.6 = ？",options:["21","2.1","210","0.21"],answer:0,explain:"同乘 10：126÷6=21。",diagram:null},
+{tag:"小数除法",level:"basic",stem:"3.6 ÷ 1.2 = ？",options:["3","0.3","30","1.2"],answer:0,explain:"同乘 10：36÷12=3。",diagram:null},
+{tag:"小数除法",level:"hard",stem:"0.48 ÷ 0.12 = ？",options:["4","0.4","40","0.04"],answer:0,explain:"同乘 100：48÷12=4。",diagram:null},
+{tag:"小数除法",level:"basic",stem:"5.6 ÷ 0.7 = ？",options:["8","0.8","80","0.08"],answer:0,explain:"同乘 10：56÷7=8。",diagram:null},
+{tag:"小数除法",level:"basic",stem:"9 ÷ 0.3 = ？",options:["30","3","300","0.3"],answer:0,explain:"同乘 10：90÷3=30。",diagram:null},
+{tag:"小数除法",level:"hard",stem:"0.72 ÷ 0.09 = ？",options:["8","0.8","80","0.08"],answer:0,explain:"同乘 100：72÷9=8。",diagram:null},
+{tag:"小数除法",level:"hard",stem:"15 ÷ 0.125 = ？",options:["120","12","1.2","1200"],answer:0,explain:"0.125=1/8，15÷1/8=15×8=120。",diagram:null},
+{tag:"简易方程",level:"basic",stem:"解方程：x + 3.5 = 8，x = ？",options:["4.5","11.5","3.5","5.5"],answer:0,explain:"两边减 3.5：x=8−3.5=4.5。",diagram:{type:"balance",left:"x + 3.5",right:"8",remove:"两边各减 3.5",result:"x = 4.5"}},
+{tag:"简易方程",level:"basic",stem:"解方程：x − 2.4 = 6，x = ？",options:["8.4","3.6","4.2","2.4"],answer:0,explain:"两边加 2.4：x=6+2.4=8.4。",diagram:null},
+{tag:"简易方程",level:"basic",stem:"解方程：3x = 15，x = ？",options:["5","3","12","45"],answer:0,explain:"两边除以 3：x=15÷3=5。",diagram:{type:"balance",left:"3x",right:"15",remove:"两边各除以 3",result:"x = 5"}},
+{tag:"简易方程",level:"basic",stem:"解方程：x ÷ 4 = 7，x = ？",options:["28","11","3","3.5"],answer:0,explain:"两边乘 4：x=7×4=28。",diagram:null},
+{tag:"简易方程",level:"hard",stem:"解方程：2x + 4 = 16，x = ？",options:["6","10","8","12"],answer:0,explain:"先减 4：2x=12；再除以 2：x=6。",diagram:{type:"balance",left:"2x + 4",right:"16",remove:"先减 4 再除以 2",result:"x = 6"}},
+{tag:"简易方程",level:"basic",stem:"解方程：x + 1.2 = 3，x = ？",options:["1.8","4.2","2.2","1.2"],answer:0,explain:"两边减 1.2：x=3−1.2=1.8。",diagram:null},
+{tag:"简易方程",level:"basic",stem:"解方程：5x = 20，x = ？",options:["4","15","25","5"],answer:0,explain:"两边除以 5：x=4。",diagram:null},
+{tag:"简易方程",level:"basic",stem:"解方程：x − 5 = 12，x = ？",options:["17","7","60","12"],answer:0,explain:"两边加 5：x=17。",diagram:null},
+{tag:"简易方程",level:"hard",stem:"解方程：4x − 6 = 18，x = ？",options:["6","3","12","24"],answer:0,explain:"先加 6：4x=24；再除以 4：x=6。",diagram:{type:"balance",left:"4x − 6",right:"18",remove:"先加 6 再除以 4",result:"x = 6"}},
+{tag:"简易方程",level:"hard",stem:"解方程：3x + 2x = 25，x = ？",options:["5","7","3","10"],answer:0,explain:"合并同类项：5x=25，x=5。",diagram:null},
+{tag:"简易方程",level:"hard",stem:"解方程：2(x + 3) = 16，x = ？",options:["5","8","11","6"],answer:0,explain:"两边除以 2：x+3=8；x=5。",diagram:null},
+{tag:"简易方程",level:"hard",stem:"解方程：6x − 3 = 21，x = ？",options:["4","3","6","18"],answer:0,explain:"先加 3：6x=24；x=4。",diagram:null},
+{tag:"平行四边形面积",level:"basic",stem:"平行四边形底 6 cm、高 4 cm，面积是？",options:["24 cm²","12 cm²","20 cm²","48 cm²"],answer:0,explain:"面积=底×高=6×4=24 cm²。",diagram:{type:"para",base:6,h:4}},
+{tag:"三角形面积",level:"basic",stem:"三角形底 10 cm、高 6 cm，面积是？",options:["30 cm²","60 cm²","15 cm²","26 cm²"],answer:0,explain:"面积=底×高÷2=10×6÷2=30 cm²。",diagram:{type:"tri",base:10,h:6}},
+{tag:"梯形面积",level:"basic",stem:"梯形上底 3、下底 7、高 4（cm），面积是？",options:["20 cm²","40 cm²","14 cm²","28 cm²"],answer:0,explain:"面积=(上底+下底)×高÷2=(3+7)×4÷2=20 cm²。",diagram:{type:"trap",a:3,b:7,h:4}},
+{tag:"平行四边形面积",level:"basic",stem:"平行四边形底 8 cm、高 5 cm，面积是？",options:["40 cm²","13 cm²","20 cm²","48 cm²"],answer:0,explain:"面积=8×5=40 cm²。",diagram:null},
+{tag:"三角形面积",level:"basic",stem:"三角形底 8 cm、高 5 cm，面积是？",options:["20 cm²","40 cm²","13 cm²","25 cm²"],answer:0,explain:"面积=8×5÷2=20 cm²。",diagram:null},
+{tag:"梯形面积",level:"basic",stem:"梯形上底 4、下底 10、高 6（cm），面积是？",options:["42 cm²","84 cm²","44 cm²","60 cm²"],answer:0,explain:"面积=(4+10)×6÷2=42 cm²。",diagram:{type:"trap",a:4,b:10,h:6}},
+{tag:"平行四边形面积",level:"basic",stem:"平行四边形面积 48 cm²、高 8 cm，底是？",options:["6 cm","10 cm","40 cm","12 cm"],answer:0,explain:"底=面积÷高=48÷8=6 cm。",diagram:{type:"para",base:6,h:8}},
+{tag:"三角形面积",level:"basic",stem:"三角形面积 36 cm²、底 9 cm，高是？",options:["8 cm","4 cm","6 cm","12 cm"],answer:0,explain:"高=面积×2÷底=36×2÷9=8 cm。",diagram:{type:"tri",base:9,h:8}},
+{tag:"平行四边形面积",level:"basic",stem:"平行四边形底 12 cm、高 7 cm，面积是？",options:["84 cm²","19 cm²","42 cm²","74 cm²"],answer:0,explain:"面积=12×7=84 cm²。",diagram:null},
+{tag:"梯形面积",level:"hard",stem:"梯形上底 5、下底 9、高 4（cm），面积是？",options:["28 cm²","56 cm²","18 cm²","36 cm²"],answer:0,explain:"面积=(5+9)×4÷2=28 cm²。",diagram:null},
+{tag:"三角形面积",level:"hard",stem:"三角形与平行四边形等底等高，三角形面积 25 cm²，平行四边形面积是？",options:["50 cm²","25 cm²","12.5 cm²","75 cm²"],answer:0,explain:"等底等高时平行四边形面积是三角形的 2 倍：25×2=50。",diagram:{type:"tri",base:10,h:5}},
+{tag:"梯形面积",level:"hard",stem:"梯形上底 6、下底 14、高 5（cm），面积是？",options:["50 cm²","100 cm²","60 cm²","44 cm²"],answer:0,explain:"面积=(6+14)×5÷2=50 cm²。",diagram:{type:"trap",a:6,b:14,h:5}},
+{tag:"三角形面积",level:"hard",stem:"直角三角形两条直角边分别是 6 cm 和 8 cm，面积是？",options:["24 cm²","48 cm²","14 cm²","28 cm²"],answer:0,explain:"两条直角边互为底和高：6×8÷2=24 cm²。",diagram:null},
+{tag:"三角形面积",level:"hard",stem:"三角形与平行四边形等底等高，平行四边形面积 40 cm²，三角形面积是？",options:["20 cm²","40 cm²","80 cm²","10 cm²"],answer:0,explain:"三角形是平行四边形的一半：40÷2=20 cm²。",diagram:null},
+{tag:"因数与倍数",level:"basic",stem:"下面哪个数是质数？",options:["9","15","17","21"],answer:2,explain:"9=3×3，15=3×5，21=3×7；17 只有 1 和 17，是质数。",diagram:{type:"factor",n:17,list:["1","17"]}},
+{tag:"奇数与偶数",level:"basic",stem:"下面哪个数是偶数？",options:["21","23","24","25"],answer:2,explain:"个位是 0、2、4、6、8 的数是偶数，24 个位是 4。",diagram:null},
+{tag:"倍数特征",level:"basic",stem:"下面哪个数是 3 的倍数？",options:["13","21","25","28"],answer:1,explain:"各位数字和是 3 的倍数：2+1=3，21 是 3 的倍数。",diagram:null},
+{tag:"倍数特征",level:"basic",stem:"下面哪个数是 5 的倍数？",options:["12","23","30","41"],answer:2,explain:"个位是 0 或 5 的数是 5 的倍数，30 个位是 0。",diagram:null},
+{tag:"奇数与偶数",level:"basic",stem:"下面哪个数是奇数？",options:["16","20","27","32"],answer:2,explain:"个位是 1、3、5、7、9 的数是奇数，27 个位是 7。",diagram:null},
+{tag:"倍数特征",level:"basic",stem:"下面哪个数是 2 的倍数？",options:["13","17","24","29"],answer:2,explain:"个位是偶数的数是 2 的倍数，24 个位是 4。",diagram:null},
+{tag:"倍数特征",level:"basic",stem:"下面哪个数能被 2 整除？",options:["15","23","36","41"],answer:2,explain:"个位是偶数即可被 2 整除，36 个位是 6。",diagram:null},
+{tag:"倍数特征",level:"basic",stem:"下面哪个数是 5 的倍数？",options:["42","57","65","73"],answer:2,explain:"个位是 0 或 5，65 个位是 5。",diagram:null},
+{tag:"倍数特征",level:"basic",stem:"下面哪个数是 3 的倍数？",options:["22","35","48","52"],answer:2,explain:"4+8=12 是 3 的倍数，所以 48 是 3 的倍数。",diagram:null},
+{tag:"质数与合数",level:"basic",stem:"下面哪个数是合数？",options:["11","13","15","17"],answer:2,explain:"15=3×5，除了 1 和本身还有别的因数，是合数；其余都是质数。",diagram:null},
+{tag:"因数与倍数",level:"basic",stem:"12 的因数一共有几个？",options:["6","4","5","12"],answer:0,explain:"12 的因数：1、2、3、4、6、12，共 6 个。",diagram:{type:"factor",n:12,list:["1","2","3","4","6","12"]}},
+{tag:"倍数特征",level:"basic",stem:"既是 2 的倍数又是 5 的倍数，个位一定是？",options:["0","2","5","8"],answer:0,explain:"同时是 2 和 5 的倍数，个位必须是 0。",diagram:null},
+{tag:"奇数与偶数",level:"basic",stem:"奇数 + 偶数，结果是？",options:["奇数","偶数","无法确定","0"],answer:0,explain:"奇数加偶数仍是奇数，例如 3+2=5。",diagram:null},
+{tag:"奇数与偶数",level:"basic",stem:"偶数 + 偶数，结果是？",options:["偶数","奇数","无法确定","0"],answer:0,explain:"偶数加偶数仍是偶数，例如 4+6=10。",diagram:null},
+{tag:"因数与倍数",level:"hard",stem:"36 一共有多少个因数？",options:["9","6","8","12"],answer:0,explain:"1、2、3、4、6、9、12、18、36，共 9 个。",diagram:{type:"factor",n:36,list:["1","2","3","4","6","9","12","18","36"]}},
+{tag:"质数与合数",level:"hard",stem:"1 到 20 中一共有多少个质数？",options:["8","7","9","6"],answer:0,explain:"2、3、5、7、11、13、17、19，共 8 个；1 既不是质数也不是合数。",diagram:{type:"factor",n:"1~20",list:["2","3","5","7","11","13","17","19"]}},
+{tag:"分数比较",level:"basic",stem:"3/4 和 5/8，哪个更大？",options:["3/4 更大","5/8 更大","相等","无法比较"],answer:0,explain:"3/4=6/8，6/8>5/8。",diagram:{type:"fraction",num1:3,den1:4,num2:5,den2:8}},
+{tag:"分数约分",level:"hard",stem:"12/18 约成最简分数是？",options:["2/3","3/4","4/6","12/18"],answer:0,explain:"最大公因数 6，分子分母同除以 6 得 2/3。",diagram:{type:"fraction",num1:12,den1:18,num2:2,den2:3}},
+{tag:"分数加减法",level:"hard",stem:"1/2 + 1/4 = ？",options:["3/4","2/6","1/6","1/4"],answer:0,explain:"通分：1/2=2/4，2/4+1/4=3/4。",diagram:{type:"fraction",num1:1,den1:2,num2:1,den2:4}},
+{tag:"分数意义",level:"basic",stem:"3/5 的分数单位是？",options:["1/5","1/3","3/5","5/5"],answer:0,explain:"分数单位是分母分之一，3/5 的单位是 1/5。",diagram:null},
+{tag:"分数意义",level:"basic",stem:"3/8 里面有几个 1/8？",options:["3","8","1","11"],answer:0,explain:"分子是几就有几个分数单位，3/8 有 3 个 1/8。",diagram:null},
+{tag:"分数意义",level:"basic",stem:"下面哪个是真分数？",options:["5/6","7/5","9/9","11/10"],answer:0,explain:"分子小于分母的是真分数，5<6。",diagram:null},
+{tag:"分数意义",level:"basic",stem:"下面哪个是假分数？",options:["3/8","5/6","7/5","2/5"],answer:2,explain:"分子大于或等于分母的是假分数，7>5。",diagram:null},
+{tag:"分数意义",level:"basic",stem:"2/3 和 1/4 通分，最小公分母是？",options:["12","7","3","8"],answer:0,explain:"3 和 4 的最小公倍数是 12。",diagram:null},
+{tag:"分数与小数",level:"basic",stem:"3/10 化成小数是？",options:["0.3","0.03","3","0.33"],answer:0,explain:"十分之几就是一位小数，3/10=0.3。",diagram:null},
+{tag:"分数比较",level:"hard",stem:"2/3 和 3/5，哪个更大？",options:["2/3 更大","3/5 更大","相等","无法比较"],answer:0,explain:"通分 15：2/3=10/15，3/5=9/15，10/15 更大。",diagram:null},
+{tag:"长方体体积",level:"basic",stem:"长方体长 5、宽 4、高 3（cm），体积是？",options:["60 cm³","47 cm³","94 cm³","12 cm³"],answer:0,explain:"体积=长×宽×高=5×4×3=60 cm³。",diagram:{type:"cubes",l:5,w:4,h:3}},
+{tag:"正方体棱长",level:"basic",stem:"正方体棱长 6 cm，棱长总和是？",options:["72 cm","36 cm","24 cm","144 cm"],answer:0,explain:"正方体 12 条棱相等，总和=12×6=72 cm。",diagram:null},
+{tag:"长方体体积",level:"basic",stem:"长方体长 4、宽 3、高 2（cm），体积是？",options:["24 cm³","9 cm³","12 cm³","18 cm³"],answer:0,explain:"体积=4×3×2=24 cm³。",diagram:null},
+{tag:"正方体体积",level:"basic",stem:"正方体棱长 5 cm，体积是？",options:["125 cm³","25 cm³","150 cm³","15 cm³"],answer:0,explain:"体积=棱长³=5×5×5=125 cm³。",diagram:null},
+{tag:"体积单位换算",level:"basic",stem:"1 立方米 = ？立方分米",options:["1000","100","10","10000"],answer:0,explain:"相邻体积单位进率是 1000，1 m³=1000 dm³。",diagram:null},
+{tag:"容积单位换算",level:"basic",stem:"1 升 = ？毫升",options:["1000","100","10","10000"],answer:0,explain:"1 L=1000 mL。",diagram:null},
+{tag:"长方体体积",level:"hard",stem:"水箱长 6、宽 5（dm），水深 3 dm，水的体积是？",options:["90 dm³","30 dm³","14 dm³","63 dm³"],answer:0,explain:"水形成长 6、宽 5、高 3 的长方体：6×5×3=90 dm³。",diagram:{type:"cubes",l:6,w:5,h:3}},
+{tag:"长方体表面积",level:"hard",stem:"长方体长 6、宽 5、高 4（cm），表面积是？",options:["148 cm²","120 cm²","74 cm²","124 cm²"],answer:0,explain:"2×(6×5+6×4+5×4)=2×(30+24+20)=148 cm²。",diagram:null},
+{tag:"长方体表面积",level:"hard",stem:"长方体长 8、宽 5、高 4（cm），表面积是？",options:["184 cm²","160 cm²","92 cm²","148 cm²"],answer:0,explain:"2×(40+32+20)=184 cm²。",diagram:{type:"cubes",l:8,w:5,h:4}},
+{tag:"长方体表面积",level:"hard",stem:"长方体长 10、宽 5、高 4（cm），表面积是？",options:["220 cm²","200 cm²","110 cm²","180 cm²"],answer:0,explain:"2×(50+40+20)=220 cm²。",diagram:null},
+{tag:"正方体表面积",level:"hard",stem:"正方体棱长 4 cm，表面积是？",options:["96 cm²","64 cm²","16 cm²","48 cm²"],answer:0,explain:"6 个相同面：6×4×4=96 cm²。",diagram:null},
+{tag:"长方体体积",level:"hard",stem:"长方体体积 120 cm³，长 8 cm、宽 5 cm，高是？",options:["3 cm","4 cm","6 cm","2 cm"],answer:0,explain:"高=体积÷(长×宽)=120÷(8×5)=3 cm。",diagram:null},
+{tag:"位置与数对",level:"basic",stem:"数对（3，5）表示的位置是？",options:["第 3 列，第 5 行","第 5 列，第 3 行","第 3 行，第 5 列","无法确定"],answer:0,explain:"数对先列后行：（列，行），即第 3 列第 5 行。",diagram:{type:"grid",col:3,row:5}},
+{tag:"位置与平移",level:"basic",stem:"点（2，3）向右平移 3 格后是？",options:["(5，3)","(2，6)","(5，6)","(2，3)"],answer:0,explain:"左右平移改变列，行不变；列 2+3=5，仍是第 3 行。",diagram:{type:"grid",col:5,row:3}},
+{tag:"位置与平移",level:"basic",stem:"点（4，2）向上平移 2 格后是？",options:["(4，4)","(6，2)","(2，4)","(4，2)"],answer:0,explain:"上下平移改变行，列不变；行 2+2=4。",diagram:null},
+{tag:"植树问题",level:"basic",stem:"100 米小路两端都栽树，每隔 10 米一棵，共栽？",options:["11 棵","10 棵","9 棵","12 棵"],answer:0,explain:"两端都栽：棵数=段数+1=100÷10+1=11。",diagram:null},
+{tag:"植树问题",level:"hard",stem:"圆形池塘周长 40 米，每隔 5 米栽一棵，共栽？",options:["8 棵","9 棵","7 棵","10 棵"],answer:0,explain:"封闭图形棵数=段数=40÷5=8。",diagram:null},
+{tag:"折线统计图",level:"basic",stem:"折线统计图最适合用来表示？",options:["数量的增减变化","各类数量多少","部分与整体关系","数据大小排名"],answer:0,explain:"折线起伏反映数量随时间或顺序的增减变化。",diagram:null},
+{tag:"可能性",level:"basic",stem:"袋中有 3 个红球、2 个白球，摸到哪种球可能性大？",options:["红球","白球","一样大","无法判断"],answer:0,explain:"红球数量多，被摸到的可能性更大。",diagram:null},
+{tag:"找次品",level:"hard",stem:"3 件物品中有 1 件次品（较轻），用天平至少称几次能找出？",options:["1 次","2 次","3 次","无法找出"],answer:0,explain:"天平两边各放 1 件，平衡则第三件是次品；不平衡轻的那件就是次品，1 次即可。",diagram:null}
+];
+const STAGES=Array.from({length:STAGE_COUNT},(_,i)=>({name:"第 "+(i+1)+" 关",range:[i*PER_STAGE,i*PER_STAGE+PER_STAGE-1]}));
+
+const state={index:0,score:0,stars:0,combo:0,maxCombo:0,picked:-1,locked:false,status:[],wrong:[],sound:true,stageScore:0,stageCorrect:0,currentStage:0};
+let paper=[];
+const $=id=>document.getElementById(id);
+const views={start:$("view-start"),map:$("view-map"),quiz:$("view-quiz"),fail:$("view-fail"),result:$("view-result")};
+function show(n){Object.values(views).forEach(v=>v.classList.remove("active"));views[n].classList.add("active")}
+let actx=null;
+function tone(freq,dur,type="sine",when=0,vol=0.18){if(!state.sound)return;try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.type=type;o.frequency.value=freq;g.gain.value=vol;g.gain.exponentialRampToValueAtTime(0.001,actx.currentTime+dur);o.connect(g);g.connect(actx.destination);o.start(actx.currentTime+when);o.stop(actx.currentTime+when+dur)}catch(e){}}
+const sndRight=()=>{ // 答对：胜利上扬琶音 C5-E5-G5-C6 + 高音叮
+  tone(523.25,.12,"triangle",0,.2);tone(659.25,.12,"triangle",.09,.2);tone(783.99,.12,"triangle",.18,.2);tone(1046.5,.2,"triangle",.27,.22);tone(1318.5,.18,"sine",.34,.14);
+};
+const sndWrong=()=>{tone(220,.2,"sawtooth",0,.12);tone(185,.22,"sawtooth",.1,.1)};
+const sndStart=()=>{tone(523,.1);tone(659,.1,"sine",.1);tone(784,.16,"sine",.2)};
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function buildPaper(){
+  const basic=shuffle(QUESTIONS.filter(q=>q.level==="basic"));
+  const hard=shuffle(QUESTIONS.filter(q=>q.level==="hard"));
+  paper=[];
+  for(let s=0;s<STAGE_COUNT;s++){
+    for(let b=0;b<BASIC_PER;b++)paper.push(basic.pop());
+    for(let h=0;h<HARD_PER;h++)paper.push(hard.pop());
+  }
+}
+function esc(s){return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
+
+function fracBar(x,y,w,num,den,color){const seg=w/den;let c="";for(let i=0;i<den;i++)c+=`<rect x="${x+i*seg}" y="${y}" width="${seg-2}" height="18" rx="3" fill="${i<num?color:"#e7eef7"}"/>`;return c}
+function renderDiagram(d){
+  if(!d)return "";
+  switch(d.type){
+    case "strip":return `<div class="diagram"><svg viewBox="0 0 220 110"><text x="110" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#1c2b3a">${esc(d.a)} ${esc(d.b)} = ${esc(d.c)}</text><rect x="30" y="50" width="160" height="26" rx="6" fill="#e7eef7"/><rect class="anim" x="30" y="50" width="${160*0.62}" height="26" rx="6" fill="#2f6fed"/><text x="30" y="100" text-anchor="middle" font-size="11" fill="#5b6b7b">0</text><text x="190" y="100" text-anchor="middle" font-size="11" fill="#5b6b7b">结果</text></svg><div class="cap">涂色部分表示运算结果</div></div>`;
+    case "balance":return `<div class="diagram"><svg viewBox="0 0 220 130"><line x1="110" y1="30" x2="110" y2="95" stroke="#5b6b7b" stroke-width="3"/><line x1="30" y1="30" x2="190" y2="30" stroke="#5b6b7b" stroke-width="3"/><path d="M30 30 l-12 26 h24 z" fill="#e7eef7"/><path d="M190 30 l-12 26 h24 z" fill="#e7eef7"/><text x="30" y="78" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f56c4">${esc(d.left)}</text><text x="190" y="78" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f56c4">${esc(d.right)}</text><text x="110" y="110" text-anchor="middle" font-size="12" fill="#5b6b7b">${esc(d.remove)}</text><text x="110" y="126" text-anchor="middle" font-size="13" font-weight="bold" fill="#f5a623">${esc(d.result)}</text></svg><div class="cap">天平两边同加同减同除，仍然平衡</div></div>`;
+    case "para":return `<div class="diagram"><svg viewBox="0 0 220 120"><polygon class="anim" points="50,90 150,90 180,30 80,30" fill="#2f6fed" fill-opacity=".85"/><line x1="80" y1="30" x2="80" y2="90" stroke="#fff" stroke-width="2" stroke-dasharray="5 4"/><polygon points="50,90 80,90 80,30" fill="#1fa97a" fill-opacity=".9"/><text x="115" y="108" text-anchor="middle" font-size="12" fill="#5b6b7b">底 ${d.base}</text><text x="186" y="62" font-size="12" fill="#5b6b7b">高 ${d.h}</text></svg><div class="cap">割补拼成长方形：底 × 高</div></div>`;
+    case "tri":return `<div class="diagram"><svg viewBox="0 0 220 120"><polygon points="30,95 120,95 75,30" fill="#2f6fed" fill-opacity=".85"/><polygon points="100,95 190,95 145,30" fill="#1fa97a" fill-opacity=".55"/><line x1="100" y1="95" x2="100" y2="30" stroke="#fff" stroke-width="1.5" stroke-dasharray="4 3"/><text x="75" y="112" text-anchor="middle" font-size="12" fill="#5b6b7b">底 ${d.base}</text></svg><div class="cap">两个相同三角形拼成平行四边形</div></div>`;
+    case "trap":return `<div class="diagram"><svg viewBox="0 0 220 120"><polygon points="30,90 110,90 95,40 45,40" fill="#2f6fed" fill-opacity=".85"/><polygon points="100,90 190,90 175,40 120,40" fill="#1fa97a" fill-opacity=".55"/><text x="70" y="106" text-anchor="middle" font-size="11" fill="#5b6b7b">下底 ${d.b}</text></svg><div class="cap">两个相同梯形拼成平行四边形</div></div>`;
+    case "factor":return `<div class="diagram"><svg viewBox="0 0 220 100"><text x="110" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f56c4">${esc(d.n)} 的因数</text>${d.list.map((f,i)=>`<rect x="${30+i*42}" y="50" width="34" height="28" rx="8" fill="#eaf2ff"/><text x="${47+i*42}" y="69" text-anchor="middle" font-size="13" fill="#1f56c4">${f}</text>`).join("")}</svg><div class="cap">因数成对出现</div></div>`;
+    case "fraction":return `<div class="diagram"><svg viewBox="0 0 220 120"><text x="20" y="28" font-size="12" fill="#1c2b3a">${d.num1}/${d.den1}</text>${fracBar(30,40,160,d.num1,d.den1,"#2f6fed")}<text x="20" y="88" font-size="12" fill="#1c2b3a">${d.num2}/${d.den2}</text>${fracBar(30,100,160,d.num2,d.den2,"#1fa97a")}</svg><div class="cap">涂色越多分数越大</div></div>`;
+    case "cubes":{let cells="";for(let r=0;r<Math.min(d.h,3);r++)for(let c=0;c<Math.min(d.l,5);c++)cells+=`<rect x="${30+c*22}" y="${70-r*20}" width="18" height="16" rx="3" fill="#2f6fed" fill-opacity="${0.55+r*0.18}"/>`;return `<div class="diagram"><svg viewBox="0 0 220 110">${cells}<text x="110" y="104" text-anchor="middle" font-size="12" fill="#5b6b7b">${d.l} × ${d.w} × ${d.h}</text></svg><div class="cap">每层块数 × 层数 = 体积</div></div>`}
+    case "grid":{let g="";for(let x=1;x<=5;x++)for(let y=1;y<=5;y++)g+=`<rect x="${30+x*22}" y="${20+y*16}" width="18" height="14" fill="none" stroke="#dbe6f2"/>`;const px=30+d.col*22+9,py=20+d.row*16+7;return `<div class="diagram"><svg viewBox="0 0 220 130">${g}<circle cx="${px}" cy="${py}" r="7" fill="#f5a623"/><text x="140" y="112" font-size="11" fill="#5b6b7b">列 ${d.col} · 行 ${d.row}</text></svg><div class="cap">先数列再数行</div></div>`}
+    default:return "";
+  }
+}
+
+function renderMap(){
+  const map=$("map");map.innerHTML="";
+  STAGES.forEach(st=>{
+    const stage=document.createElement("div");stage.className="stage";
+    const title=document.createElement("div");title.className="stage-title";title.textContent=st.name;
+    const nodes=document.createElement("div");nodes.className="nodes";
+    for(let i=st.range[0];i<=st.range[1];i++){
+      const n=document.createElement("div");const stt=state.status[i]||"locked";n.className="node "+stt;
+      let ico="";
+      if(stt==="done")ico='<svg class="ico" viewBox="0 0 24 24" fill="white"><path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4L4.2 7.7l5.4-.8z"/></svg>';
+      else if(stt==="miss")ico='<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+      else ico='<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#9db2c6" stroke-width="2"><circle cx="12" cy="12" r="5"/></svg>';
+      n.innerHTML=ico+"<span>"+(i+1)+"</span>";nodes.appendChild(n);
+    }
+    stage.appendChild(title);stage.appendChild(nodes);map.appendChild(stage);
+  });
+}
+
+function stageOf(i){return Math.floor(i/PER_STAGE)}
+function resetStage(){state.stageScore=0;state.stageCorrect=0;state.combo=0}
+function renderQuestion(){
+  const q=paper[state.index];state.picked=-1;state.locked=false;
+  const stage=stageOf(state.index),pos=state.index%PER_STAGE+1;
+  $("progress-label").textContent="第 "+(stage+1)+" 关 · 第 "+pos+"/10 题";
+  $("progress-fill").style.width=(pos/PER_STAGE*100)+"%";
+  $("q-tag").textContent=q.tag;
+  const lv=$("q-level");lv.className="q-level "+q.level;lv.textContent=q.level==="basic"?"基础":"提升";
+  $("q-stem").textContent=q.stem;$("score").textContent=state.stageScore;$("stars").textContent=state.stars;
+  const ex=$("explain");ex.classList.remove("show");ex.innerHTML="";
+  $("btn-next").style.display="none";updateCombo();
+  const box=$("options");box.innerHTML="";const keys=["A","B","C","D"];
+  q.options.forEach((text,i)=>{const div=document.createElement("div");div.className="opt";div.innerHTML='<div class="key">'+keys[i]+'</div><div class="txt"></div>';div.querySelector(".txt").textContent=text;div.addEventListener("click",()=>choose(i,div));box.appendChild(div)});
+}
+function updateCombo(){const p=$("combo-pill");if(state.combo>=2){p.style.display="inline-flex";$("combo").textContent=state.combo}else p.style.display="none"}
+function burst(x,y,color){for(let k=0;k<10;k++){const p=document.createElement("div");p.className="particle";p.style.background=color;p.style.left=x+"px";p.style.top=y+"px";document.body.appendChild(p);const ang=Math.random()*Math.PI*2,dist=50+Math.random()*50;p.animate([{transform:"translate(0,0) scale(1)",opacity:1},{transform:"translate("+Math.cos(ang)*dist+"px,"+Math.sin(ang)*dist+"px) scale(.3)",opacity:0}],{duration:600+Math.random()*300,easing:"ease-out"}).onfinish=()=>p.remove()}}
+
+function choose(i,el){
+  if(state.locked)return;state.locked=true;
+  const q=paper[state.index];const opts=[...document.querySelectorAll(".opt")];
+  opts.forEach(o=>o.classList.add("locked","dim"));el.classList.remove("dim");
+  const rect=el.getBoundingClientRect();
+  if(i===q.answer){el.classList.add("correct");state.combo++;state.maxCombo=Math.max(state.maxCombo,state.combo);state.score+=10+Math.min(state.combo-1,5)*2;state.stageScore+=10;state.stageCorrect++;state.stars+=state.combo>=3?2:1;state.status[state.index]="done";sndRight();burst(rect.left+rect.width/2,rect.top+rect.height/2,"#f5a623")}
+  else{el.classList.add("wrong");opts[q.answer].classList.add("correct");state.combo=0;state.status[state.index]="miss";state.wrong.push({q,picked:i,gi:state.index});sndWrong();burst(rect.left+rect.width/2,rect.top+rect.height/2,"#e5534b")}
+  $("score").textContent=state.stageScore;$("stars").textContent=state.stars;updateCombo();
+  const ex=$("explain");
+  ex.innerHTML="<b>解析：</b>"+q.explain;
+  ex.insertAdjacentHTML("beforeend",renderDiagram(q.diagram));
+  ex.classList.add("show");
+  const stageEnd=(state.index%PER_STAGE===PER_STAGE-1);const nb=$("btn-next");nb.style.display="inline-flex";nb.textContent=stageEnd?"关卡结算":"下一题";
+}
+function gradeOf(s){if(s>=900)return["数学小达人","反应又快又准，太厉害啦！"];if(s>=700)return["实力小将","基础扎实，再练几道更稳。"];if(s>=600)return["稳步前进","基本掌握，错题再看一遍。"];return["继续加油","别灰心，跟着解析补一补再来挑战！"]}
+function showResult(){
+  const pct=state.score/(paper.length*10);const [g,msg]=gradeOf(state.score);
+  $("grade").textContent=g;$("meta").textContent="答对 "+(paper.length-state.wrong.length)+" 题 · "+msg;
+  $("stat-score").textContent=state.score;$("stat-star").textContent=state.stars;$("stat-combo").textContent=state.maxCombo;
+  const review=$("review");review.innerHTML="";
+  if(state.wrong.length===0)review.innerHTML='<div class="review-item"><span class="ok">全部答对</span>，没有错题需要回顾。</div>';
+  else state.wrong.forEach(item=>{const d=document.createElement("div");d.className="review-item";d.innerHTML='<div><span class="no">答错</span>：'+esc(item.q.stem)+'</div><div class="ans">你的选择：'+esc(item.q.options[item.picked])+' ｜ 正确答案：'+esc(item.q.options[item.q.answer])+'</div>';review.appendChild(d)});
+  show("result");
+}
+function showFail(){
+  const stage=stageOf(state.index);
+  $("fail-score").textContent=state.stageScore;
+  $("fail-correct").textContent=state.stageCorrect;
+  $("fail-meta").textContent="第 "+(stage+1)+" 关 得分 "+state.stageScore+"，答对 "+state.stageCorrect+"/10，未达 70 分";
+  show("fail");
+}
+function retryStage(){
+  const stage=stageOf(state.index),start=stage*PER_STAGE;
+  state.wrong=state.wrong.filter(w=>w.gi<start||w.gi>=start+PER_STAGE);
+  for(let k=0;k<PER_STAGE;k++)state.status[start+k]="locked";
+  state.index=start;resetStage();state.status[start]="current";
+  sndStart();renderMap();renderQuestion();show("quiz");
+}
+function startGame(){buildPaper();state.index=0;state.score=0;state.stars=0;state.combo=0;state.maxCombo=0;state.stageScore=0;state.stageCorrect=0;state.currentStage=0;state.status=Array(paper.length).fill("locked");state.wrong=[];state.status[0]="current";sndStart();renderMap();renderQuestion();show("quiz")}
+$("btn-start").addEventListener("click",startGame);
+$("btn-next").addEventListener("click",()=>{
+  const stage=stageOf(state.index);
+  const stageEnd=(state.index%PER_STAGE===PER_STAGE-1);
+  if(!stageEnd){state.index++;state.status[state.index]="current";renderMap();renderQuestion();return}
+  if(state.stageScore>=70){
+    if(stage===STAGE_COUNT-1){showResult();return}
+    state.currentStage=stage+1;resetStage();state.index=state.currentStage*PER_STAGE;state.status[state.index]="current";
+    renderMap();renderQuestion();
+  }else{
+    for(let k=0;k<PER_STAGE;k++){const gi=stage*PER_STAGE+k;if(state.status[gi]!=="done")state.status[gi]="miss";}
+    showFail();
+  }
+});
+$("btn-again").addEventListener("click",startGame);
+$("btn-retry").addEventListener("click",retryStage);
+$("btn-home").addEventListener("click",()=>show("start"));
+$("btn-sound").addEventListener("click",()=>{state.sound=!state.sound;$("btn-sound").textContent=state.sound?"音效：开":"音效：关"});
+</script>
+</body>
+</html>

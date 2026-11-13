@@ -1,0 +1,4 @@
+// 顶层工程配置：插件版本统一在此声明
+plugins {
+    id 'com.android.application' version '8.5.2' apply false
+}
